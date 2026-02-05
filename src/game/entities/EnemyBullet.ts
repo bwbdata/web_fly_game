@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { COLORS } from '../types'
 
 export class EnemyBullet extends Phaser.GameObjects.Graphics {
-  public body!: Phaser.Physics.Arcade.Body
+  declare public body: Phaser.Physics.Arcade.Body
   private speed: number = 300
   public damage: number = 10
 

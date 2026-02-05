@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { COLORS, PowerUpType } from '../types'
 
 export class PowerUp extends Phaser.GameObjects.Container {
-  public body!: Phaser.Physics.Arcade.Body
+  declare public body: Phaser.Physics.Arcade.Body
   public powerUpType: PowerUpType
   private graphics: Phaser.GameObjects.Graphics
   private icon: Phaser.GameObjects.Text

@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GAME_CONFIG, COLORS } from '../types'
+import { GAME_CONFIG } from '../types'
 
 export class GameOverScene extends Phaser.Scene {
   private score: number = 0

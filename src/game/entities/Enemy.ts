@@ -2,7 +2,7 @@ import Phaser from 'phaser'
 import { COLORS, EnemyType } from '../types'
 
 export abstract class Enemy extends Phaser.GameObjects.Container {
-  public body!: Phaser.Physics.Arcade.Body
+  declare public body: Phaser.Physics.Arcade.Body
   public hp: number
   public maxHp: number
   public damage: number
@@ -65,8 +65,6 @@ export abstract class Enemy extends Phaser.GameObjects.Container {
 
   // 创建爆炸效果
   private createExplosion() {
-    const particles: Phaser.GameObjects.Graphics[] = []
-
     for (let i = 0; i < 8; i++) {
       const particle = this.scene.add.graphics()
       particle.fillStyle(COLORS.WHITE, 1)
@@ -74,7 +72,6 @@ export abstract class Enemy extends Phaser.GameObjects.Container {
       particle.setPosition(this.x, this.y)
 
       const angle = (Math.PI * 2 * i) / 8
-      const speed = 100
 
       this.scene.tweens.add({
         targets: particle,

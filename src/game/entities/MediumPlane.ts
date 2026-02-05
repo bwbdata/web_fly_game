@@ -51,7 +51,7 @@ export class MediumPlane extends Enemy {
     this.graphics.fillPath()
   }
 
-  update(time: number, delta: number) {
+  update(time: number, _delta: number) {
     // 向下移动
     this.y += 1.5
 

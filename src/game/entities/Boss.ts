@@ -103,7 +103,7 @@ export class Boss extends Enemy {
     const barWidth = (GAME_CONFIG.WIDTH - 100) * hpPercent
 
     // 根据血量改变颜色
-    let color = COLORS.WHITE
+    let color: number = COLORS.WHITE
     if (hpPercent < 0.3) {
       color = 0xFF0000 // 红色
     } else if (hpPercent < 0.6) {
@@ -199,7 +199,6 @@ export class Boss extends Enemy {
           particle.setPosition(explosionX, explosionY)
 
           const angle = (Math.PI * 2 * i) / 16
-          const speed = 100 + wave * 30
 
           scene.tweens.add({
             targets: particle,
@@ -287,7 +286,7 @@ export class Boss extends Enemy {
     }
   }
 
-  update(time: number, delta: number) {
+  update(_time: number, delta: number) {
     if (!this.active) return
 
     // 左右移动

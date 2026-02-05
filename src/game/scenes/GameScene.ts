@@ -1,5 +1,5 @@
 import Phaser from 'phaser'
-import { GAME_CONFIG, COLORS, EnemyType } from '../types'
+import { GAME_CONFIG, EnemyType } from '../types'
 import { Player } from '../entities/Player'
 import { EnemyManager } from '../managers/EnemyManager'
 import { CollisionManager } from '../managers/CollisionManager'
@@ -11,7 +11,6 @@ export class GameScene extends Phaser.Scene {
   private isDragging = false
   private enemyManager?: EnemyManager
   private powerUpManager?: PowerUpManager
-  private collisionManager?: CollisionManager
   private score: number = 0
   private scoreText?: Phaser.GameObjects.Text
   private waveText?: Phaser.GameObjects.Text
@@ -37,7 +36,7 @@ export class GameScene extends Phaser.Scene {
       this.powerUpManager = new PowerUpManager(this)
 
       // 创建碰撞管理器（传入敌人子弹组）
-      this.collisionManager = new CollisionManager(
+      new CollisionManager(
         this,
         this.player,
         this.enemyManager.enemies,
@@ -188,7 +187,7 @@ export class GameScene extends Phaser.Scene {
     let lastTapTime = 0
 
     // 触摸控制
-    this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
+    this.input.on('pointerdown', (_pointer: Phaser.Input.Pointer) => {
       const currentTime = this.time.now
 
       // 检测双击（300ms内两次点击）
@@ -214,7 +213,7 @@ export class GameScene extends Phaser.Scene {
         newX = Phaser.Math.Clamp(newX, 20, GAME_CONFIG.WIDTH - 20)
         newY = Phaser.Math.Clamp(newY, 20, GAME_CONFIG.HEIGHT - 20)
 
-        this.player.moveTo(newX, newY)
+        this.player.moveToPosition(newX, newY)
       }
     })
 
@@ -226,7 +225,7 @@ export class GameScene extends Phaser.Scene {
     this.cursors = this.input.keyboard?.createCursorKeys()
   }
 
-  private onEnemyDestroyed(score: number, x: number, y: number, enemyType: EnemyType) {
+  private onEnemyDestroyed(score: number, x: number, y: number, _enemyType: EnemyType) {
     // 增加分数
     this.score += score
     if (this.scoreText) {

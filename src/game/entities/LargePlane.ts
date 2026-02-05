@@ -51,12 +51,11 @@ export class LargePlane extends Enemy {
     this.graphics.fillPath()
   }
 
-  update(time: number, delta: number) {
+  update(time: number, _delta: number) {
     // 向下移动（较慢）
     this.y += 1
 
     // 左右移动
-    const moveRange = 100
     const moveSpeed = 0.001
     this.x = this.x + Math.sin(time * moveSpeed) * 1.5
 

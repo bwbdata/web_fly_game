@@ -14,7 +14,6 @@ export class EnemyManager {
 
   // 波次系统
   public currentWave: number = 0
-  private enemiesPerWave: number = 5 // 每波敌人数量
   private enemiesSpawned: number = 0 // 当前波次已生成的敌人数
   private waveInProgress: boolean = false
   private waveBreakTime: number = 2000 // 波次间隔时间（毫秒）
@@ -41,7 +40,7 @@ export class EnemyManager {
     this.startNextWave()
   }
 
-  update(time: number, delta: number) {
+  update(_time: number, delta: number) {
     // 收集所有敌人的子弹到统一的子弹组
     this.collectEnemyBullets()
 

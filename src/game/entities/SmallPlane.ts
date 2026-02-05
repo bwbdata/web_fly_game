@@ -39,7 +39,7 @@ export class SmallPlane extends Enemy {
     this.body.setVelocityY(this.speed)
   }
 
-  update(time: number, delta: number) {
+  update(_time: number, _delta: number) {
     // 如果飞出屏幕底部，销毁
     if (this.y > this.scene.scale.height + 50) {
       this.destroy()

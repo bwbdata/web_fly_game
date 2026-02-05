@@ -3,7 +3,7 @@ import { COLORS, PLAYER_INITIAL } from '../types'
 import { Bullet } from './Bullet'
 
 export class Player extends Phaser.GameObjects.Container {
-  public body!: Phaser.Physics.Arcade.Body
+  declare public body: Phaser.Physics.Arcade.Body
   private graphics: Phaser.GameObjects.Graphics
   private speed: number
   public hp: number
@@ -150,7 +150,7 @@ export class Player extends Phaser.GameObjects.Container {
 
     // 实时减少所有增益的剩余时间
     const boostsToUpdate: string[] = []
-    this.boostTimeRemaining.forEach((remainingTime, boostType) => {
+    this.boostTimeRemaining.forEach((_remainingTime, boostType) => {
       boostsToUpdate.push(boostType)
     })
 
@@ -217,7 +217,7 @@ export class Player extends Phaser.GameObjects.Container {
   }
 
   // 移动到指定位置（触摸控制）
-  moveTo(x: number, y: number) {
+  moveToPosition(x: number, y: number) {
     this.setPosition(x, y)
   }
 
@@ -289,7 +289,7 @@ export class Player extends Phaser.GameObjects.Container {
   }
 
   // 应用增益效果
-  applyPowerUp(type: string, value: number, duration: number, currentTime: number) {
+  applyPowerUp(type: string, value: number, _duration: number, _currentTime: number) {
     switch (type) {
       case 'health':
         this.heal(value)

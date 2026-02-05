@@ -73,14 +73,14 @@ export class CollisionManager {
 
   // 子弹击中敌人
   private bulletHitEnemy(
-    bulletObj: Phaser.GameObjects.GameObject,
-    enemyObj: Phaser.GameObjects.GameObject
+    bulletObj: any,
+    enemyObj: any
   ) {
     const bullet = bulletObj as Bullet
     const enemy = enemyObj as Enemy
 
     // 敌人受到伤害
-    const destroyed = enemy.takeDamage(bullet.damage)
+    enemy.takeDamage(bullet.damage)
 
     // 销毁子弹
     bullet.destroy()
@@ -88,8 +88,8 @@ export class CollisionManager {
 
   // 玩家撞击敌人
   private playerHitEnemy(
-    playerObj: Phaser.GameObjects.GameObject,
-    enemyObj: Phaser.GameObjects.GameObject
+    _playerObj: any,
+    enemyObj: any
   ) {
     const enemy = enemyObj as Enemy
 
@@ -102,8 +102,8 @@ export class CollisionManager {
 
   // 玩家被敌人子弹击中
   private playerHitByEnemyBullet(
-    playerObj: Phaser.GameObjects.GameObject,
-    bulletObj: Phaser.GameObjects.GameObject
+    _playerObj: any,
+    bulletObj: any
   ) {
     const bullet = bulletObj as EnemyBullet
 
@@ -116,8 +116,8 @@ export class CollisionManager {
 
   // 玩家收集道具
   private playerCollectPowerUp(
-    playerObj: Phaser.GameObjects.GameObject,
-    powerUpObj: Phaser.GameObjects.GameObject
+    _playerObj: any,
+    powerUpObj: any
   ) {
     const powerUp = powerUpObj as PowerUp
     const type = powerUp.powerUpType

@@ -4,7 +4,14 @@ import { PLAYER_INITIAL } from '@/game/types'
 
 export const useGameStore = defineStore('game', () => {
   // 玩家属性
-  const playerStats = ref({
+  const playerStats = ref<{
+    hp: number
+    maxHp: number
+    attack: number
+    defense: number
+    speed: number
+    ultimateCount: number
+  }>({
     hp: PLAYER_INITIAL.hp,
     maxHp: PLAYER_INITIAL.maxHp,
     attack: PLAYER_INITIAL.attack,
