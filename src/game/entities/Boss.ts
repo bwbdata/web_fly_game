@@ -13,17 +13,20 @@ export class Boss extends Enemy {
   private currentPhase: number = 0
   private hpBar?: Phaser.GameObjects.Graphics
   private hpBarBg?: Phaser.GameObjects.Graphics
+  private bossTheme: string = 'default' // Boss主题
 
-  constructor(scene: Phaser.Scene, x: number, y: number) {
+  constructor(scene: Phaser.Scene, x: number, y: number, theme: string = 'default', hp: number = ENEMY_STATS.boss.hp) {
     super(
       scene,
       x,
       y,
       'boss',
-      ENEMY_STATS.boss.hp,
+      hp,
       ENEMY_STATS.boss.damage,
       ENEMY_STATS.boss.score
     )
+
+    this.bossTheme = theme
 
     // 创建图形对象
     this.graphics = scene.add.graphics()
@@ -58,6 +61,111 @@ export class Boss extends Enemy {
 
   private drawBoss() {
     this.graphics.clear()
+
+    switch (this.bossTheme) {
+      case 'city':
+        this.drawCityBoss() // 机械巨塔：方形
+        break
+      case 'desert':
+        this.drawDesertBoss() // 沙暴之眼：圆形
+        break
+      case 'jungle':
+        this.drawJungleBoss() // 丛林守护者：多角形
+        break
+      case 'ocean':
+        this.drawOceanBoss() // 深海利维坦：流线型
+        break
+      case 'space':
+        this.drawSpaceBoss() // 星际母舰：大型复杂形状
+        break
+      default:
+        this.drawDefaultBoss() // 默认五边形
+    }
+  }
+
+  // 城市Boss：方形机械塔
+  private drawCityBoss() {
+    this.graphics.lineStyle(3, COLORS.WHITE, 1)
+    this.graphics.fillStyle(COLORS.BLACK, 1)
+    this.graphics.fillRect(-40, -40, 80, 80)
+    this.graphics.strokeRect(-40, -40, 80, 80)
+    // 内部网格
+    this.graphics.lineStyle(1, COLORS.WHITE, 0.5)
+    for (let i = -30; i <= 30; i += 20) {
+      this.graphics.lineBetween(-40, i, 40, i)
+      this.graphics.lineBetween(i, -40, i, 40)
+    }
+  }
+
+  // 沙漠Boss：圆形沙暴之眼
+  private drawDesertBoss() {
+    this.graphics.lineStyle(3, COLORS.WHITE, 1)
+    this.graphics.fillStyle(COLORS.BLACK, 1)
+    this.graphics.fillCircle(0, 0, 40)
+    this.graphics.strokeCircle(0, 0, 40)
+    // 螺旋纹理
+    for (let i = 0; i < 3; i++) {
+      this.graphics.strokeCircle(0, 0, 40 - i * 10)
+    }
+  }
+
+  // 雨林Boss：六边形丛林守护者
+  private drawJungleBoss() {
+    this.graphics.lineStyle(3, COLORS.WHITE, 1)
+    this.graphics.fillStyle(COLORS.BLACK, 1)
+    const points: Phaser.Geom.Point[] = []
+    const sides = 6
+    const radius = 40
+    for (let i = 0; i < sides; i++) {
+      const angle = (Math.PI * 2 * i) / sides - Math.PI / 2
+      points.push(new Phaser.Geom.Point(
+        Math.cos(angle) * radius,
+        Math.sin(angle) * radius
+      ))
+    }
+    const polygon = new Phaser.Geom.Polygon(points)
+    this.graphics.fillPoints(polygon.points, true)
+    this.graphics.strokePoints(polygon.points, true)
+  }
+
+  // 海洋Boss：流线型利维坦
+  private drawOceanBoss() {
+    this.graphics.lineStyle(3, COLORS.WHITE, 1)
+    this.graphics.fillStyle(COLORS.BLACK, 1)
+    this.graphics.fillEllipse(0, 0, 80, 50)
+    this.graphics.strokeEllipse(0, 0, 80, 50)
+    // 波浪纹理
+    this.graphics.lineStyle(1, COLORS.WHITE, 0.5)
+    for (let y = -20; y <= 20; y += 10) {
+      this.graphics.beginPath()
+      this.graphics.moveTo(-40, y)
+      for (let x = -40; x <= 40; x += 10) {
+        this.graphics.lineTo(x, y + Math.sin(x * 0.2) * 3)
+      }
+      this.graphics.strokePath()
+    }
+  }
+
+  // 太空Boss：星际母舰
+  private drawSpaceBoss() {
+    this.graphics.lineStyle(3, COLORS.WHITE, 1)
+    this.graphics.fillStyle(COLORS.BLACK, 1)
+    // 主体（菱形）
+    this.graphics.beginPath()
+    this.graphics.moveTo(0, -45)
+    this.graphics.lineTo(35, 0)
+    this.graphics.lineTo(0, 45)
+    this.graphics.lineTo(-35, 0)
+    this.graphics.closePath()
+    this.graphics.fillPath()
+    this.graphics.strokePath()
+    // 细节
+    this.graphics.strokeCircle(0, 0, 20)
+    this.graphics.strokeCircle(0, 0, 10)
+  }
+
+  // 默认Boss：五边形
+  private drawDefaultBoss() {
 
     // 绘制大型五边形BOSS
     this.graphics.lineStyle(3, COLORS.WHITE, 1)

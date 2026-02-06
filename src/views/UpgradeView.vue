@@ -1,10 +1,14 @@
 <template>
   <div class="upgrade-view">
-    <h1 class="title">升级属性</h1>
+    <h1 class="title">关卡完成!</h1>
 
     <div class="stats">
       <div class="stat-item">
-        <span>当前分数:</span>
+        <span>当前关卡:</span>
+        <span class="value">{{ currentLevelName }}</span>
+      </div>
+      <div class="stat-item">
+        <span>获得分数:</span>
         <span class="value">{{ gameStore.score }}</span>
       </div>
     </div>
@@ -51,16 +55,38 @@
       </div>
     </div>
 
-    <button class="back-btn" @click="goBack">返回主菜单</button>
+    <div class="action-buttons">
+      <button v-if="hasNextLevel" class="next-level-btn" @click="goToNextLevel">
+        进入下一关
+      </button>
+      <button v-else class="complete-btn" @click="goBack">
+        完成所有关卡!
+      </button>
+      <button class="retry-btn" @click="retryLevel">重新挑战本关</button>
+      <button class="back-btn" @click="goBack">返回主菜单</button>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useGameStore } from '@/stores/game'
+import { LEVELS } from '@/game/types'
 
 const router = useRouter()
 const gameStore = useGameStore()
+
+// 计算当前关卡信息
+const currentLevelName = computed(() => {
+  const level = LEVELS.find(l => l.id === gameStore.currentLevel)
+  return level ? level.name : '未知关卡'
+})
+
+// 判断是否有下一关
+const hasNextLevel = computed(() => {
+  return gameStore.currentLevel < 5
+})
 
 const upgrade = (type: string, cost: number) => {
   let success = false
@@ -83,6 +109,19 @@ const upgrade = (type: string, cost: number) => {
   if (!success) {
     alert('分数不足！')
   }
+}
+
+// 进入下一关
+const goToNextLevel = () => {
+  gameStore.goToNextLevel()
+  gameStore.startGame()
+  router.push('/game')
+}
+
+// 重新挑战本关
+const retryLevel = () => {
+  gameStore.startGame()
+  router.push('/game')
 }
 
 const goBack = () => {
@@ -166,6 +205,44 @@ const goBack = () => {
 }
 
 .upgrade-btn:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.next-level-btn,
+.complete-btn,
+.retry-btn {
+  padding: 15px 40px;
+  background-color: #fff;
+  color: #000;
+  border: 2px solid #fff;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.next-level-btn:hover,
+.complete-btn:hover,
+.retry-btn:hover {
+  background-color: transparent;
+  color: #fff;
+}
+
+.retry-btn {
+  background-color: transparent;
+  color: #fff;
+}
+
+.retry-btn:hover {
   background-color: #fff;
   color: #000;
 }

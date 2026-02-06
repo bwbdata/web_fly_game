@@ -2,6 +2,8 @@ import Phaser from 'phaser'
 import { SmallPlane } from '../entities/SmallPlane'
 import { MediumPlane } from '../entities/MediumPlane'
 import { LargePlane } from '../entities/LargePlane'
+import { Cannon } from '../entities/Cannon'
+import { ElectricNet } from '../entities/ElectricNet'
 import { Boss } from '../entities/Boss'
 import { GAME_CONFIG } from '../types'
 
@@ -22,9 +24,14 @@ export class EnemyManager {
   private bossSpawned: boolean = false // BOSS是否已生成
   private waveDuration: number = 10000 // 每波持续时间（10秒）
   private waveTimer: number = 0 // 当前波次计时器
+  private readonly MAX_WAVES = 3 // 固定3波普通敌人（第4波是Boss）
+  private bossHp: number = 1000 // Boss血量（从外部传入）
+  private bossTheme: string = 'default' // Boss主题（从外部传入）
 
-  constructor(scene: Phaser.Scene) {
+  constructor(scene: Phaser.Scene, bossHp: number = 1000, bossTheme: string = 'default') {
     this.scene = scene
+    this.bossHp = bossHp
+    this.bossTheme = bossTheme
 
     // 创建敌人组
     this.enemies = scene.add.group({
@@ -94,8 +101,8 @@ export class EnemyManager {
     this.waveTimer = 0
     this.bossSpawned = false
 
-    // 检查是否为BOSS波次（每3波，即每30秒+BOSS）
-    this.isBossWave = this.currentWave % 3 === 0
+    // 检查是否为BOSS波次（第4波固定为Boss）
+    this.isBossWave = this.currentWave === this.MAX_WAVES + 1
 
     if (this.isBossWave) {
       // BOSS波次：只生成BOSS
@@ -105,7 +112,7 @@ export class EnemyManager {
     } else {
       // 普通波次：10秒内持续生成敌人
       // 根据波次增加生成频率
-      this.spawnInterval = Math.max(600, 1200 - this.currentWave * 50) // 生成间隔逐渐缩短，最低600ms
+      this.spawnInterval = Math.max(600, 1200 - this.currentWave * 100) // 生成间隔逐渐缩短
       // 触发波次开始事件
       this.scene.events.emit('waveStart', this.currentWave)
     }
@@ -132,29 +139,39 @@ export class EnemyManager {
       // 第1-2波：只生成小型飞机
       this.spawnSmallPlane(x, y)
     } else if (this.currentWave <= 5) {
-      // 第3-5波：70%小型，30%中型
-      if (random < 0.7) {
+      // 第3-5波：60%小型，25%中型，15%大炮
+      if (random < 0.6) {
         this.spawnSmallPlane(x, y)
-      } else {
+      } else if (random < 0.85) {
         this.spawnMediumPlane(x, y)
+      } else {
+        this.spawnCannon(x)
       }
     } else if (this.currentWave <= 10) {
-      // 第6-10波：50%小型，30%中型，20%大型
-      if (random < 0.5) {
+      // 第6-10波：35%小型，25%中型，20%大型，12%大炮，8%电网
+      if (random < 0.35) {
         this.spawnSmallPlane(x, y)
-      } else if (random < 0.8) {
+      } else if (random < 0.6) {
         this.spawnMediumPlane(x, y)
-      } else {
+      } else if (random < 0.8) {
         this.spawnLargePlane(x, y)
+      } else if (random < 0.92) {
+        this.spawnCannon(x)
+      } else {
+        this.spawnElectricNet(x, y)
       }
     } else {
-      // 第10波后：30%小型，40%中型，30%大型
-      if (random < 0.3) {
+      // 第10波后：20%小型，30%中型，25%大型，15%大炮，10%电网
+      if (random < 0.2) {
         this.spawnSmallPlane(x, y)
-      } else if (random < 0.7) {
+      } else if (random < 0.5) {
         this.spawnMediumPlane(x, y)
-      } else {
+      } else if (random < 0.75) {
         this.spawnLargePlane(x, y)
+      } else if (random < 0.9) {
+        this.spawnCannon(x)
+      } else {
+        this.spawnElectricNet(x, y)
       }
     }
   }
@@ -174,8 +191,21 @@ export class EnemyManager {
     this.enemies.add(enemy)
   }
 
+  private spawnCannon(x: number) {
+    // 大炮固定在屏幕上方（Y坐标固定）
+    const y = Phaser.Math.Between(80, 150)
+    const cannon = new Cannon(this.scene, x, y)
+    this.enemies.add(cannon)
+  }
+
+  private spawnElectricNet(x: number, y: number) {
+    // 电网从屏幕上方生成
+    const net = new ElectricNet(this.scene, x, y)
+    this.enemies.add(net)
+  }
+
   private spawnBoss() {
-    const boss = new Boss(this.scene, GAME_CONFIG.WIDTH / 2, 100)
+    const boss = new Boss(this.scene, GAME_CONFIG.WIDTH / 2, 100, this.bossTheme, this.bossHp)
     this.enemies.add(boss)
   }
 

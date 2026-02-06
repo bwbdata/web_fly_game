@@ -26,11 +26,20 @@ export const useGameStore = defineStore('game', () => {
   const highScore = ref(0)
   const isGameActive = ref(false)
 
-  // 加载本地存储的最高分
+  // 关卡进度
+  const currentLevel = ref(1) // 当前关卡（1-5）
+  const maxUnlockedLevel = ref(1) // 最大解锁关卡
+
+  // 加载本地存储的最高分和关卡进度
   const loadHighScore = () => {
     const saved = localStorage.getItem('highScore')
     if (saved) {
       highScore.value = parseInt(saved)
+    }
+
+    const savedLevel = localStorage.getItem('maxUnlockedLevel')
+    if (savedLevel) {
+      maxUnlockedLevel.value = parseInt(savedLevel)
     }
   }
 
@@ -111,6 +120,25 @@ export const useGameStore = defineStore('game', () => {
     return false
   }
 
+  // 关卡管理
+  const setCurrentLevel = (levelId: number) => {
+    currentLevel.value = levelId
+  }
+
+  const completeLevel = () => {
+    // 通关后解锁下一关
+    if (currentLevel.value < 5 && currentLevel.value >= maxUnlockedLevel.value) {
+      maxUnlockedLevel.value = currentLevel.value + 1
+      localStorage.setItem('maxUnlockedLevel', maxUnlockedLevel.value.toString())
+    }
+  }
+
+  const goToNextLevel = () => {
+    if (currentLevel.value < 5) {
+      currentLevel.value++
+    }
+  }
+
   // 初始化
   loadHighScore()
 
@@ -120,6 +148,8 @@ export const useGameStore = defineStore('game', () => {
     level,
     highScore,
     isGameActive,
+    currentLevel,
+    maxUnlockedLevel,
     resetGame,
     startGame,
     endGame,
@@ -127,6 +157,9 @@ export const useGameStore = defineStore('game', () => {
     upgradeMaxHp,
     upgradeAttack,
     upgradeDefense,
-    upgradeUltimate
+    upgradeUltimate,
+    setCurrentLevel,
+    completeLevel,
+    goToNextLevel
   }
 })
